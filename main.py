@@ -138,6 +138,7 @@ class SiteBuilder:
 
     def _get_apps(self):
         apps = []
+        seen = set()
 
         yaml = YAML(typ='safe')
 
@@ -166,6 +167,13 @@ class SiteBuilder:
             else:
                 print(f"fdroiddata: Ignoring {entry['name']}: can't find repo")
                 continue
+
+            # Skip duplicate repos
+            if repo in seen:
+                print(f"fdroiddata: Ignoring {entry['name']}: duplicate repo")
+                continue
+
+            seen.add(repo)
 
             name = app_data['AutoName'] if 'AutoName' in app_data else entry['name'][:-4]  # Remove .yml at the end of name
             app = App(name=name, repo=repo)
